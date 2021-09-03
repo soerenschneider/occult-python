@@ -1,10 +1,10 @@
 {
-  "token": "s.6slogD7dLA2n6cRalLFagj11",
+  "token": "s.4slogD3dLA2n6cRalLFagj11",
   "addr": "http://vault:8200",
   "path": "gocryptfs/test",
+  "json_secret_path": "data.data.value",
   "args": [
     "gocryptfs",
-    "-pass",
     "crypted",
     "plain"
   ]
