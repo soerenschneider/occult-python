@@ -1,0 +1,11 @@
+{
+  "token": "s.6slogD7dLA2n6cRalLFagj11",
+  "addr": "http://vault:8200",
+  "path": "gocryptfs/test",
+  "args": [
+    "gocryptfs",
+    "-pass",
+    "crypted",
+    "plain"
+  ]
+}
