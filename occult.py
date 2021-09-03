@@ -7,12 +7,13 @@ import sys
 
 from urllib.parse import urljoin
 from subprocess import Popen, PIPE
-from typing import Optional
+from typing import Optional, Dict
 
 import backoff
 import requests
 
 DEFAULT_CONFIG_LOCATION = os.path.expanduser("~/.occult.conf")
+DEFAULT_JSON_SECRET_PATH = "data.value"
 
 
 class Context:
@@ -38,16 +39,23 @@ class Context:
         content = json.loads(resp.content)
         return content["auth.client_token"]
 
+    @staticmethod
+    def _dynamic_access_json(data: Dict[str, str], key: str):
+        value = data
+        for k in key.split('.'):
+            value = value[k]
+        return value
+
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
-    def read_pass(self, path: str, token: str) -> Optional[str]:
-        logging.info("Trying to read secret '%s'", path)
-        url = urljoin(self._endpoint, f"/v1/secret/data/{path}")
+    def read_pass(self, vault_secret_path: str, token: str, json_secret_path: str) -> Optional[str]:
+        logging.info("Trying to read secret '%s'", vault_secret_path)
+        url = urljoin(self._endpoint, f"/v1/secret/data/{vault_secret_path}")
         resp = requests.get(headers={'X-Vault-Token': token}, url=url)
         if resp.status_code > 204:
             raise VaultException(f"Couldn't fetch secret, got HTTP {resp.status_code}: {resp.content} for {url}")
 
         content = json.loads(resp.content)
-        return content["data"]["value"]
+        return Context._dynamic_access_json(content, json_secret_path)
 
     def send_password(self, password: str) -> None:
         logging.info("Sending password to defined command '%s'", self._args[0])
@@ -108,10 +116,17 @@ def main(config_file: str) -> None:
             token = conf["token"]
         else:
             token = ctx.authenticate()
-        password = ctx.read_pass(conf["path"], token)
+
+        json_secret_path = DEFAULT_JSON_SECRET_PATH
+        if "json_secret_path" in conf:
+            json_secret_path = conf["json_secret_path"]
+        password = ctx.read_pass(conf["path"], token, json_secret_path)
         ctx.send_password(password)
         if "post_hook" in conf and len(conf["post_hook"]) > 0:
             ctx.post_hook()
+    except KeyError as err:
+        logging.error("No such field found in reply from vault, check json_secret_path: %s", err)
+        sys.exit(1)
     except VaultException as err:
         logging.error("Error talking to vault: %s", err)
         sys.exit(1)
