@@ -24,6 +24,11 @@ class Context:
             self._secret_id = config["secret_id"]
         self._args = config["args"]
 
+        if "post_hook" in config:
+            self._post_hook = config["post_hook"]
+        else:
+            self._post_hook = []
+
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
     def authenticate(self) -> Optional[str]:
         logging.info("Trying to authenticate with app role '%s'", self._role_id)
@@ -82,6 +87,9 @@ class Context:
             raise CmdNotSuccessfulException()
 
     def post_hook(self) -> None:
+        if not self._post_hook:
+            return
+
         logging.info("Running post hook cmd '%s'", self._post_hook[0])
         proc = Popen(self._post_hook)
         if proc.returncode != 0:
@@ -157,8 +165,7 @@ def main(config_file: str) -> None:
         password = ctx.read_pass(conf["path"], token, json_secret_path)
 
         ctx.send_password(password)
-        if "post_hook" in conf and len(conf["post_hook"]) > 0:
-            ctx.post_hook()
+        ctx.post_hook()
 
         success = True
     except KeyError as err:
