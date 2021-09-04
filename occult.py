@@ -107,7 +107,7 @@ def validate_config(config):
     if not config:
         raise Exception("no config supplied")
 
-    keywords = ["addr", "path", "args"]
+    keywords = ["addr", "vault_path", "args"]
     for keyword in keywords:
         if keyword not in config:
             raise ConfigError(f"no '{keyword}' configured")
@@ -167,7 +167,7 @@ def main(config_file: str) -> None:
         json_secret_path = DEFAULT_JSON_SECRET_PATH
         if "json_secret_path" in conf:
             json_secret_path = conf["json_secret_path"]
-        password = ctx.read_pass(conf["path"], token, json_secret_path)
+        password = ctx.read_pass(conf["vault_path"], token, json_secret_path)
 
         ctx.send_password(password)
         ctx.post_hook()
