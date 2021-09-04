@@ -39,7 +39,7 @@ class Context:
         }
         resp = requests.post(data=data, url=url)
         if resp.status_code > 204:
-            raise Exception(f"Couldn't login, got HTTP {resp.status_code}: {resp.content}")
+            raise VaultException(f"Couldn't login, got HTTP {resp.status_code}: {resp.content}")
 
         content = json.loads(resp.content)
         return content["auth.client_token"]
