@@ -14,6 +14,7 @@ import requests
 
 DEFAULT_CONFIG_LOCATION = os.path.expanduser("~/.occult.conf")
 DEFAULT_JSON_SECRET_PATH = "data.value"
+ENV_OCCULT_CONFIG = "OCCULT_CONFIG"
 
 
 class Context:
@@ -205,5 +206,5 @@ class CmdNotSuccessfulException(Exception):
 
 
 if __name__ == "__main__":
-    configFile = os.getenv("OCCULT_CONFIG", DEFAULT_CONFIG_LOCATION)
+    configFile = os.getenv(ENV_OCCULT_CONFIG, DEFAULT_CONFIG_LOCATION)
     main(configFile)
