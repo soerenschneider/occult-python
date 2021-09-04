@@ -84,6 +84,7 @@ class Context:
         enc = password.encode('utf-8')
         with Popen(self._args, stdin=PIPE) as proc:
             proc.communicate(input=enc)
+            proc.wait(60)
             if proc.returncode != 0:
                 raise CmdNotSuccessfulException()
 
@@ -93,6 +94,7 @@ class Context:
 
         logging.info("Running post hook cmd '%s'", self._post_hook[0])
         with Popen(self._post_hook) as proc:
+            proc.wait(15)
             if proc.returncode != 0:
                 raise CmdNotSuccessfulException()
 
