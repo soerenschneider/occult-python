@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.1.1](https://www.github.com/soerenschneider/occult/compare/v1.1.0...v1.1.1) (2021-09-04)
+
+
+### Bug Fixes
+
+* wait for process to complete ([c2464cf](https://www.github.com/soerenschneider/occult/commit/c2464cf1511ac34293cea955b854cea1179f72a0))
+
 ## [1.1.0](https://www.github.com/soerenschneider/occult/compare/v1.0.0...v1.1.0) (2021-09-04)
 
 
