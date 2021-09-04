@@ -60,7 +60,7 @@ class Context:
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
     def _lookup_self(self, token: str) -> Dict:
         logging.info("Trying to lookup used token")
-        url = urljoin(self._endpoint, f"/v1/auth/token/lookup-self")
+        url = urljoin(self._endpoint, "/v1/auth/token/lookup-self")
         resp = requests.get(headers={'X-Vault-Token': token}, url=url)
         if resp.status_code > 204:
             raise VaultException(f"Couldn't lookup token, got HTTP {resp.status_code}: {resp.content} for {url}")
@@ -81,24 +81,24 @@ class Context:
     def send_password(self, password: str) -> None:
         logging.info("Sending password to defined command '%s'", self._args[0])
         enc = password.encode('utf-8')
-        proc = Popen(self._args, stdin=PIPE)
-        proc.communicate(input=enc)
-        if proc.returncode != 0:
-            raise CmdNotSuccessfulException()
+        with Popen(self._args, stdin=PIPE) as proc:
+            proc.communicate(input=enc)
+            if proc.returncode != 0:
+                raise CmdNotSuccessfulException()
 
     def post_hook(self) -> None:
         if not self._post_hook:
             return
 
         logging.info("Running post hook cmd '%s'", self._post_hook[0])
-        proc = Popen(self._post_hook)
-        if proc.returncode != 0:
-            raise CmdNotSuccessfulException()
+        with Popen(self._post_hook) as proc:
+            if proc.returncode != 0:
+                raise CmdNotSuccessfulException()
 
 
 def load_config(location: str):
     logging.info("Trying to read config from '%s'", location)
-    with open(location, 'r') as config_file:
+    with open(location, 'r', encoding="utf-8") as config_file:
         data = config_file.read()
         return json.loads(data)
 
@@ -126,8 +126,15 @@ occult_last_invocation_seconds { datetime.datetime.now().timestamp() }
 # TYPE occult_success_bool gauge
 occult_success_bool { 1 if success else 0 }"""
 
-    with open(metrics_file, 'w') as f:
+    with open(metrics_file, 'w', encoding="utf-8") as f:
         f.write(payload)
+
+
+def _read_config(config_file: str) -> Dict:
+    conf = load_config(config_file)
+    validate_config(conf)
+    logging.info("Config successfully read and validated")
+    return conf
 
 
 def main(config_file: str) -> None:
@@ -136,9 +143,7 @@ def main(config_file: str) -> None:
 
     conf = None
     try:
-        conf = load_config(config_file)
-        validate_config(conf)
-        logging.info("Config successfully read and validated")
+        conf = _read_config(config_file)
     except FileNotFoundError as err:
         logging.error("No config file found, quitting: %s", err)
         sys.exit(1)
