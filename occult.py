@@ -138,20 +138,7 @@ def _read_config(config_file: str) -> Dict:
     return conf
 
 
-def main(config_file: str) -> None:
-    logging.basicConfig(format='%(asctime)s %(message)s')
-    logging.getLogger().setLevel(logging.INFO)
-
-    conf = None
-    try:
-        conf = _read_config(config_file)
-    except FileNotFoundError as err:
-        logging.error("No config file found, quitting: %s", err)
-        sys.exit(1)
-    except ConfigError as err:
-        logging.error("Invalid config: %s", err)
-        sys.exit(1)
-
+def main(conf: Dict) -> None:
     success = False
     ttl = -1
     try:
@@ -206,5 +193,18 @@ class CmdNotSuccessfulException(Exception):
 
 
 if __name__ == "__main__":
-    configFile = os.getenv(ENV_OCCULT_CONFIG, DEFAULT_CONFIG_LOCATION)
-    main(configFile)
+    config_file = os.getenv(ENV_OCCULT_CONFIG, DEFAULT_CONFIG_LOCATION)
+    logging.basicConfig(format='%(asctime)s %(message)s')
+    logging.getLogger().setLevel(logging.INFO)
+
+    conf = None
+    try:
+        conf = _read_config(config_file)
+    except FileNotFoundError as err:
+        logging.error("No config file found, quitting: %s", err)
+        sys.exit(1)
+    except ConfigError as err:
+        logging.error("Invalid config: %s", err)
+        sys.exit(1)
+
+    main(conf)
