@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/soerenschneider/occult/compare/v1.1.1...v1.2.0) (2021-09-06)
+
+
+### Features
+
+* Check file permissions and panic if too liberal ([328d17e](https://www.github.com/soerenschneider/occult/commit/328d17ef8ddb9e1d5c36f800cfe68287faf94c41))
+
 ### [1.1.1](https://www.github.com/soerenschneider/occult/compare/v1.1.0...v1.1.1) (2021-09-04)
 
 
