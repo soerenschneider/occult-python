@@ -4,6 +4,7 @@ import os
 import logging
 import json
 import sys
+import stat
 
 from urllib.parse import urljoin
 from subprocess import Popen, PIPE
@@ -140,6 +141,14 @@ def _read_config(config_file: str) -> Dict:
     return conf
 
 
+def _check_config_permissions(config_file: str) -> None:
+    file_stat = os.stat(config_file)
+    grp_readable = bool(file_stat.st_mode & stat.S_IRGRP)
+    world_readable = bool(file_stat.st_mode & stat.S_IRWXG)
+    if grp_readable or world_readable:
+        raise ConfigError("Config file must not be group/world readable")
+
+
 def main(conf: Dict) -> None:
     success = False
     ttl = -1
@@ -195,12 +204,13 @@ class CmdNotSuccessfulException(Exception):
 
 
 if __name__ == "__main__":
-    config_file = os.getenv(ENV_OCCULT_CONFIG, DEFAULT_CONFIG_LOCATION)
     logging.basicConfig(format='%(asctime)s %(message)s')
     logging.getLogger().setLevel(logging.INFO)
+    config_file = os.getenv(ENV_OCCULT_CONFIG, DEFAULT_CONFIG_LOCATION)
 
     conf = None
     try:
+        _check_config_permissions(config_file)
         conf = _read_config(config_file)
     except FileNotFoundError as err:
         logging.error("No config file found, quitting: %s", err)
