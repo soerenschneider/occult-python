@@ -13,6 +13,12 @@ from typing import Optional, Dict
 import backoff
 import requests
 
+CONF_POST_HOOK = "post_hook"
+CONF_ARGS = "args"
+CONF_VAULT_ROLE_ID = "role_id"
+CONF_VAULT_SECRET_ID = "secret_id"
+CONF_VAULT_ADDR = "vault_addr"
+
 DEFAULT_CONFIG_LOCATION = os.path.expanduser("~/.occult.conf")
 DEFAULT_JSON_SECRET_PATH = "data.value"
 ENV_OCCULT_CONFIG = "OCCULT_CONFIG"
@@ -20,14 +26,14 @@ ENV_OCCULT_CONFIG = "OCCULT_CONFIG"
 
 class Context:
     def __init__(self, config):
-        self._endpoint = config["addr"]
-        if "role_id" in config and "secret_id" in config:
-            self._role_id = config["role_id"]
-            self._secret_id = config["secret_id"]
-        self._args = config["args"]
+        self._endpoint = config[CONF_VAULT_ADDR]
+        if CONF_VAULT_ROLE_ID in config and CONF_VAULT_SECRET_ID in config:
+            self._role_id = config[CONF_VAULT_ROLE_ID]
+            self._secret_id = config[CONF_VAULT_SECRET_ID]
+        self._args = config[CONF_ARGS]
 
-        if "post_hook" in config:
-            self._post_hook = config["post_hook"]
+        if CONF_POST_HOOK in config:
+            self._post_hook = config[CONF_POST_HOOK]
         else:
             self._post_hook = []
 
