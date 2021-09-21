@@ -8,7 +8,7 @@ import stat
 
 from urllib.parse import urljoin
 from subprocess import Popen, PIPE
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
 import backoff
 import requests
@@ -66,7 +66,7 @@ class Context:
         return None
 
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
-    def _lookup_self(self, token: str) -> Dict:
+    def _lookup_self(self, token: str) -> Dict[str, Any]:
         logging.info("Trying to lookup used token")
         url = urljoin(self._endpoint, "/v1/auth/token/lookup-self")
         resp = requests.get(headers={'X-Vault-Token': token}, url=url)
@@ -106,14 +106,14 @@ class Context:
                 raise CmdNotSuccessfulException()
 
 
-def load_config(location: str):
+def load_config(location: str) -> Dict[str, Any]:
     logging.info("Trying to read config from '%s'", location)
     with open(location, 'r', encoding="utf-8") as config_file:
         data = config_file.read()
         return json.loads(data)
 
 
-def validate_config(config):
+def validate_config(config: Dict[str, Any]) -> None:
     if not config:
         raise Exception("no config supplied")
 
@@ -140,7 +140,7 @@ occult_success_bool { 1 if success else 0 }"""
         f.write(payload)
 
 
-def _read_config(config_file: str) -> Dict:
+def _read_config(config_file: str) -> Dict[str, Any]:
     conf = load_config(config_file)
     validate_config(conf)
     logging.info("Config successfully read and validated")
