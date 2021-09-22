@@ -13,6 +13,8 @@ from typing import Optional, Dict, Any
 import backoff
 import requests
 
+CONF_METRICS_FILE = "metrics_file"
+CONF_JSON_SECRET_PATH = "json_secret_path"
 CONF_SECRET_ID = "secret_id"
 CONF_ROLE_ID = "role_id"
 CONF_TOKEN = "token"
@@ -170,11 +172,14 @@ def start(conf: Dict) -> None:
             token = ctx.authenticate()
 
         ttl = ctx.get_token_ttl(token)
-        logging.info("Token expires in %d seconds (on %s)", ttl, datetime.datetime.now() + datetime.timedelta(seconds=ttl))
+        if ttl == 0:
+            logging.info("Used token does not expire")
+        else:
+            logging.info("Token expires in %d seconds (on %s)", ttl, datetime.datetime.now() + datetime.timedelta(seconds=ttl))
 
         json_secret_path = DEFAULT_JSON_SECRET_PATH
-        if "json_secret_path" in conf:
-            json_secret_path = conf["json_secret_path"]
+        if CONF_JSON_SECRET_PATH in conf:
+            json_secret_path = conf[CONF_JSON_SECRET_PATH]
         password = ctx.read_pass(conf[CONF_VAULT_PATH], token, json_secret_path)
 
         ctx.send_password(password)
@@ -190,11 +195,11 @@ def start(conf: Dict) -> None:
     except CmdNotSuccessfulException:
         logging.error("Command unsuccessful")
 
-    if "metrics_file" in conf:
-        logging.info("Writing metrics to %s", conf["metrics_file"])
-        write_metrics_file(conf["metrics_file"], ttl, success)
+    if CONF_METRICS_FILE in conf:
+        logging.info("Writing metrics to %s", conf[CONF_METRICS_FILE])
+        write_metrics_file(conf[CONF_METRICS_FILE], ttl, success)
     else:
-        logging.warning("Not writing metrics, no metrics_file specified")
+        logging.warning(f"Not writing metrics, no {CONF_METRICS_FILE} specified")
 
     if not success:
         sys.exit(1)
