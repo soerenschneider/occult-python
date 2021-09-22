@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.1](https://www.github.com/soerenschneider/occult/compare/v1.2.0...v1.2.1) (2021-09-22)
+
+
+### Bug Fixes
+
+* ignore cmd output ([972d65b](https://www.github.com/soerenschneider/occult/commit/972d65b46407f19796fc2ca64effb7178faf1262))
+
 ## [1.2.0](https://www.github.com/soerenschneider/occult/compare/v1.1.1...v1.2.0) (2021-09-06)
 
 
