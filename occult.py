@@ -13,8 +13,12 @@ from typing import Optional, Dict, Any
 import backoff
 import requests
 
+CONF_SECRET_ID = "secret_id"
+CONF_ROLE_ID = "role_id"
+CONF_TOKEN = "token"
 CONF_POST_HOOK = "post_hook"
 CONF_ARGS = "args"
+CONF_VAULT_PATH = "vault_path"
 CONF_VAULT_ROLE_ID = "role_id"
 CONF_VAULT_SECRET_ID = "secret_id"
 CONF_VAULT_ADDR = "vault_addr"
@@ -117,14 +121,14 @@ def validate_config(config: Dict[str, Any]) -> None:
     if not config:
         raise Exception("no config supplied")
 
-    keywords = ["addr", "vault_path", "args"]
+    keywords = [CONF_VAULT_ADDR, CONF_VAULT_PATH, CONF_ARGS]
     for keyword in keywords:
         if keyword not in config:
             raise ConfigError(f"no '{keyword}' configured")
 
-    if "token" not in config:
-        if "role_id" not in config and "secret_id" not in config:
-            raise ConfigError("either specify 'token' or 'secret_id' and 'role_id' values")
+    if CONF_TOKEN not in config:
+        if CONF_ROLE_ID not in config and CONF_SECRET_ID not in config:
+            raise ConfigError(f"either specify '{CONF_TOKEN}' or both '{CONF_SECRET_ID}' and '{CONF_ROLE_ID}' values")
 
 
 def write_metrics_file(metrics_file: str, token_ttl: int, success: bool) -> None:
@@ -172,7 +176,7 @@ def main(conf: Dict) -> None:
         json_secret_path = DEFAULT_JSON_SECRET_PATH
         if "json_secret_path" in conf:
             json_secret_path = conf["json_secret_path"]
-        password = ctx.read_pass(conf["vault_path"], token, json_secret_path)
+        password = ctx.read_pass(conf[CONF_VAULT_PATH], token, json_secret_path)
 
         ctx.send_password(password)
         ctx.post_hook()
