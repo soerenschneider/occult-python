@@ -7,7 +7,7 @@ import sys
 import stat
 
 from urllib.parse import urljoin
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, DEVNULL
 from typing import Optional, Dict, Any
 
 import backoff
@@ -95,7 +95,7 @@ class Context:
     def send_password(self, password: str) -> None:
         logging.info("Sending password to defined command '%s'", self._args[0])
         enc = password.encode('utf-8')
-        with Popen(self._args, stdin=PIPE) as proc:
+        with Popen(self._args, stdin=PIPE, stdout=DEVNULL) as proc:
             proc.communicate(input=enc)
             proc.wait(60)
             if proc.returncode != 0:
@@ -106,7 +106,7 @@ class Context:
             return
 
         logging.info("Running post hook cmd '%s'", self._post_hook[0])
-        with Popen(self._post_hook) as proc:
+        with Popen(self._post_hook, stdout=DEVNULL) as proc:
             proc.wait(15)
             if proc.returncode != 0:
                 raise CmdNotSuccessfulException()
