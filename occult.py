@@ -159,12 +159,11 @@ def _check_config_permissions(config_file: str) -> None:
         raise ConfigError("Config file must not be group/world readable")
 
 
-def main(conf: Dict) -> None:
+def start(conf: Dict) -> None:
     success = False
     ttl = -1
     try:
         ctx = Context(conf)
-        token = None
         if "token" in conf:
             token = conf["token"]
         else:
@@ -213,12 +212,11 @@ class CmdNotSuccessfulException(Exception):
     pass
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(format='%(asctime)s %(message)s')
     logging.getLogger().setLevel(logging.INFO)
     config_file = os.getenv(ENV_OCCULT_CONFIG, DEFAULT_CONFIG_LOCATION)
 
-    conf = None
     try:
         _check_config_permissions(config_file)
         conf = _read_config(config_file)
@@ -229,4 +227,8 @@ if __name__ == "__main__":
         logging.error("Invalid config: %s", err)
         sys.exit(1)
 
-    main(conf)
+    start(conf)
+
+
+if __name__ == "__main__":
+    main()
