@@ -140,8 +140,8 @@ occult_last_invocation_seconds { datetime.datetime.now().timestamp() }
 # TYPE occult_success_bool gauge
 occult_success_bool { 1 if success else 0 }"""
 
-    with open(metrics_file, 'w', encoding="utf-8") as f:
-        f.write(payload)
+    with open(metrics_file, 'w', encoding="utf-8") as metrics_file:
+        metrics_file.write(payload)
 
 
 def _read_config(config_file: str) -> Dict[str, Any]:
