@@ -1,5 +1,5 @@
 # Occult
-Reads a secret from Hashicorp Vault's K/V store and extracts & pipes the acquired secret to a pre-configured program.
+Reads a secret from Hashicorp Vault's K/V store, extracts & pipes the acquired secret to a pre-configured program in order to automate a process involving a secret.
 
 ## Demo
 ![demo](demo.gif)
@@ -12,7 +12,7 @@ The config file must not be world-readable.
 ### Example
 A valid config example can be seen [here](contrib/test.json).
 
-### Values
+### Reference
 | Key              | Description                                                                               | Type             | Mandatory |
 |------------------|-------------------------------------------------------------------------------------------|------------------|-----------|
 | vault_addr       | URL to the vault server                                                                   | string           | Y         |
@@ -24,3 +24,6 @@ A valid config example can be seen [here](contrib/test.json).
 | role_id          | Approle role id to acquire the vault token. Can not be used in conjunction with `token`   | string           | N         |
 | secret_id        | Approle secret id to acquire the vault token. Can not be used in conjunction with `token` | string           | N         |
 | metrics_file     | File to write metrics to                                                                  | string           | N         |
+
+## Vault Configuration
+A working example can be found [here](https://github.com/soerenschneider/tf-vault)
