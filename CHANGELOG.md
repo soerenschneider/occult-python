@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.2](https://www.github.com/soerenschneider/occult/compare/v1.2.1...v1.2.2) (2021-10-05)
+
+
+### Bug Fixes
+
+* Fix invalid metric format ([a8ee377](https://www.github.com/soerenschneider/occult/commit/a8ee377361bc5f8d6ec019841877a74b189536aa))
+
 ### [1.2.1](https://www.github.com/soerenschneider/occult/compare/v1.2.0...v1.2.1) (2021-09-22)
 
 
