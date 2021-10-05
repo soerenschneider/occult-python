@@ -140,7 +140,8 @@ occult_token_ttl_seconds { token_ttl }
 # TYPE occult_last_invocation_seconds gauge
 occult_last_invocation_seconds { datetime.datetime.now().timestamp() }
 # TYPE occult_success_bool gauge
-occult_success_bool { 1 if success else 0 }"""
+occult_success_bool { 1 if success else 0 }
+"""
 
     with open(metrics_file, 'w', encoding="utf-8") as metrics_file:
         metrics_file.write(payload)
