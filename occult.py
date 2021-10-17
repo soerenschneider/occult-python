@@ -135,8 +135,9 @@ def validate_config(config: Dict[str, Any]) -> None:
 
 def write_metrics_file(metrics_file: str, token_ttl: int, success: bool) -> None:
     # instead of adding another dependency, we just write this simple metrics file manually
+    expiry = datetime.datetime.now() + datetime.timedelta(seconds=token_ttl)
     payload = f"""# TYPE occult_token_ttl_seconds gauge
-occult_token_ttl_seconds { token_ttl }
+occult_token_expiry_seconds { expiry.timestamp() }
 # TYPE occult_last_invocation_seconds gauge
 occult_last_invocation_seconds { datetime.datetime.now().timestamp() }
 # TYPE occult_success_bool gauge
