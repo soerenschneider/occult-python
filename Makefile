@@ -15,6 +15,9 @@ install-venv: _copy
 	chmod 555 ${SCRIPT}
 	chown root ${SCRIPT}
 
+tests: venv
+	venv/bin/python3 -m unittest test_*.py
+
 install: _copy
 	if [ -f ${SCRIPT} ]; then rm -vf ${SCRIPT}; fi
 	if [ ! -s ${SCRIPT} ]; then ln -s ${DIR}/occult.py ${SCRIPT}; fi
