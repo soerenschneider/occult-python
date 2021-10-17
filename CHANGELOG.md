@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/soerenschneider/occult/compare/v1.2.2...v1.3.0) (2021-10-17)
+
+
+### Features
+
+* Add possibility for different profiles ([942f036](https://www.github.com/soerenschneider/occult/commit/942f03684af4efd887c8560e05f5b82b83f08bd6))
+
+
+### Bug Fixes
+
+* Replace relative expiry value with absolute value ([d0ad91e](https://www.github.com/soerenschneider/occult/commit/d0ad91eaaf2f3868a292f08363b61e94246d1ce0))
+
 ### [1.2.2](https://www.github.com/soerenschneider/occult/compare/v1.2.1...v1.2.2) (2021-10-05)
 
 
