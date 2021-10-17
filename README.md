@@ -4,6 +4,13 @@ Reads a secret from Hashicorp Vault's K/V store, extracts & pipes the acquired s
 ## Demo
 ![demo](demo.gif)
 
+## Installation
+
+```shell
+git clone https://github.com/soerenschneider/occult.git
+sudo make -C occult install
+```
+
 ## Configuration
 Occult tries to read a config file from `"$HOME/.occult.conf"`. You can override this behavior by setting the environment variable `OCCULT_CONFIG`.
 
