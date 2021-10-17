@@ -35,6 +35,14 @@ A valid config example can be seen [here](contrib/test.json).
 
 &ast; You have to *either* provide token or tuple of role_id / secret_id
 
+## Metrics
+
+| Name                           | Help                                        | Type  | Labels  |
+|--------------------------------|---------------------------------------------|-------|---------|
+| occult_token_expiry_seconds    | Unix timestamp when the used token expires  | Gauge | profile |
+| occult_last_invocation_seconds | Unix timestamp when occult has been invoked | Gauge | profile |
+| occult_success_bool            | Boolean whether this run was successful     | Gauge | profile |
+
 ## Vault Example Configuration
 
 Terraform snippet to configure Vault accordingly
