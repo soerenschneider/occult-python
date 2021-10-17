@@ -24,7 +24,9 @@ CONF_VAULT_PATH = "vault_path"
 CONF_VAULT_ROLE_ID = "role_id"
 CONF_VAULT_SECRET_ID = "secret_id"
 CONF_VAULT_ADDR = "vault_addr"
+CONF_PROFILE = "profile"
 
+DEFAULT_PROFILE_NAME = "default"
 DEFAULT_CONFIG_LOCATION = os.path.expanduser("~/.occult.conf")
 DEFAULT_JSON_SECRET_PATH = "data.value"
 ENV_OCCULT_CONFIG = "OCCULT_CONFIG"
@@ -133,15 +135,15 @@ def validate_config(config: Dict[str, Any]) -> None:
             raise ConfigError(f"either specify '{CONF_TOKEN}' or both '{CONF_SECRET_ID}' and '{CONF_ROLE_ID}' values")
 
 
-def write_metrics_file(metrics_file: str, token_ttl: int, success: bool) -> None:
+def write_metrics_file(metrics_file: str, token_ttl: int, success: bool, profile="default") -> None:
     # instead of adding another dependency, we just write this simple metrics file manually
     expiry = datetime.datetime.now() + datetime.timedelta(seconds=token_ttl)
     payload = f"""# TYPE occult_token_ttl_seconds gauge
-occult_token_expiry_seconds { expiry.timestamp() }
+occult_token_expiry_seconds{{profile="{ profile }"}} { expiry.timestamp() }
 # TYPE occult_last_invocation_seconds gauge
-occult_last_invocation_seconds { datetime.datetime.now().timestamp() }
+occult_last_invocation_seconds{{profile="{ profile }"}} { datetime.datetime.now().timestamp() }
 # TYPE occult_success_bool gauge
-occult_success_bool { 1 if success else 0 }
+occult_success_bool{{profile="{ profile }"}} { 1 if success else 0 }
 """
 
     with open(metrics_file, 'w', encoding="utf-8") as metrics_file:
@@ -167,6 +169,11 @@ def start(conf: Dict) -> None:
     success = False
     ttl = -1
     try:
+        profile = "default"
+        if CONF_PROFILE in conf:
+            profile = conf[CONF_PROFILE]
+            logging.info("Started occult using profile %s", profile)
+
         ctx = Context(conf)
         if "token" in conf:
             token = conf["token"]
@@ -199,7 +206,7 @@ def start(conf: Dict) -> None:
 
     if CONF_METRICS_FILE in conf:
         logging.info("Writing metrics to %s", conf[CONF_METRICS_FILE])
-        write_metrics_file(conf[CONF_METRICS_FILE], ttl, success)
+        write_metrics_file(conf[CONF_METRICS_FILE], ttl, success, profile)
     else:
         logging.warning(f"Not writing metrics, no {CONF_METRICS_FILE} specified")
 
