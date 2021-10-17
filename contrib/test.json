@@ -1,8 +1,9 @@
 {
   "token": "s.4slogD3dLA2n6cRalLFagj11",
-  "addr": "http://vault:8200",
+  "vault_addr": "http://vault:8200",
   "vault_path": "gocryptfs/test",
   "json_secret_path": "data.data.value",
+  "profile": "gocryptfs",
   "args": [
     "gocryptfs",
     "crypted",
