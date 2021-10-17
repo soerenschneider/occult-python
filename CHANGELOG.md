@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.3](https://www.github.com/soerenschneider/occult/compare/v1.2.2...v1.2.3) (2021-10-17)
+
+
+### Bug Fixes
+
+* Replace relative expiry value with absolute value ([d0ad91e](https://www.github.com/soerenschneider/occult/commit/d0ad91eaaf2f3868a292f08363b61e94246d1ce0))
+
 ### [1.2.2](https://www.github.com/soerenschneider/occult/compare/v1.2.1...v1.2.2) (2021-10-05)
 
 
