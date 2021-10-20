@@ -5,8 +5,7 @@
   "json_secret_path": "data.data.value",
   "profile": "gocryptfs",
   "args": [
-    "gocryptfs",
-    "crypted",
-    "plain"
+    "tee",
+    "secret"
   ]
 }

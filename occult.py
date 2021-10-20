@@ -84,6 +84,19 @@ class Context:
         return json.loads(resp.content)
 
     @backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
+    def renew_token(self, token: str, ttl=2592000) -> Dict[str, Any]:
+        logging.info("Trying to renew token by %d seconds", ttl)
+        url = urljoin(self._endpoint, "/v1/auth/token/renew-self")
+        data = {
+            "increment": f"{ttl}s"
+        }
+        resp = requests.post(headers={'X-Vault-Token': token}, url=url, json=data)
+        if resp.status_code > 204:
+            raise VaultException(f"Couldn't lookup token, got HTTP {resp.status_code}: {resp.content} for {url}")
+
+        return json.loads(resp.content)
+
+    @backoff.on_exception(backoff.expo, requests.exceptions.RequestException)
     def read_pass(self, vault_secret_path: str, token: str, json_secret_path: str) -> Optional[str]:
         logging.info("Trying to read secret '%s'", vault_secret_path)
         url = urljoin(self._endpoint, f"/v1/secret/data/{vault_secret_path}")
@@ -168,6 +181,7 @@ def _check_config_permissions(config_file: str) -> None:
 def start(conf: Dict) -> None:
     success = False
     ttl = -1
+    ctx = None
     try:
         profile = "default"
         if CONF_PROFILE in conf:
@@ -179,12 +193,6 @@ def start(conf: Dict) -> None:
             token = conf["token"]
         else:
             token = ctx.authenticate()
-
-        ttl = ctx.get_token_ttl(token)
-        if ttl == 0:
-            logging.info("Used token does not expire")
-        else:
-            logging.info("Token expires in %d seconds (on %s)", ttl, datetime.datetime.now() + datetime.timedelta(seconds=ttl))
 
         json_secret_path = DEFAULT_JSON_SECRET_PATH
         if CONF_JSON_SECRET_PATH in conf:
@@ -203,6 +211,19 @@ def start(conf: Dict) -> None:
         logging.error("No such cmd: %s", err)
     except CmdNotSuccessfulException:
         logging.error("Command unsuccessful")
+
+    try:
+        if "token" in conf:
+            token = conf["token"]
+            ctx.renew_token(token)
+
+            ttl = ctx.get_token_ttl(token)
+            if ttl == 0:
+                logging.info("Used token does not expire")
+            else:
+                logging.info("Token expires in %d seconds (on %s)", ttl, datetime.datetime.now() + datetime.timedelta(seconds=ttl))
+    except VaultException as err:
+        logging.error("Could not increase token lifetime: %s", err)
 
     if CONF_METRICS_FILE in conf:
         logging.info("Writing metrics to %s", conf[CONF_METRICS_FILE])
