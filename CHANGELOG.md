@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://www.github.com/soerenschneider/occult/compare/v1.3.0...v1.4.0) (2021-10-20)
+
+
+### Features
+
+* try to renew token ([f9778cf](https://www.github.com/soerenschneider/occult/commit/f9778cf85c38d8aa127cf76b93f4e97572103e9d))
+
 ## [1.3.0](https://www.github.com/soerenschneider/occult/compare/v1.2.2...v1.3.0) (2021-10-17)
 
 
