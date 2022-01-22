@@ -22,7 +22,7 @@ import requests
 DEFAULT_BACKOFF_ATTEMPTS = 5
 DEFAULT_PROFILE_NAME = "default"
 DEFAULT_CONFIG_LOCATION = "~/.occult.conf"
-DEFAULT_JSON_SECRET_PATH = "data.value"
+DEFAULT_JSON_VALUE_ACCESSOR = "data.value"
 ENV_OCCULT_CONFIG = "OCCULT_CONFIG"
 
 
@@ -136,15 +136,15 @@ def start_occultism(args: argparse.Namespace, vault_client: VaultClient, drone: 
         read_secret = vault_client.read_kv_secret_data(token, args.secret_path)
         logging.info("Successfully read secret from vault")
 
-        logging.info("Trying to extract value from JSON path '%s'", args.json_secret_path)
-        password = Utils.extract_json_value(read_secret, args.json_secret_path)
+        logging.info("Trying to extract value from JSON path '%s'", args.json_value_accessor)
+        password = Utils.extract_json_value(read_secret, args.json_value_accessor)
 
         drone.send_password(password)
         drone.run_post_hook()
 
         success = True
     except KeyError as err:
-        logging.error("No such field found in reply from vault, check json_secret_path: '%s'", err)
+        logging.error("No such field found in reply from vault, check json_value_accessor: '%s'", err)
     except VaultException as err:
         logging.error("Error talking to vault: %s", err)
     except FileNotFoundError as err:
@@ -374,7 +374,7 @@ class ParsingUtils:
         group.add_argument("--vault-secret-id-file", help="Read secret_id from a flat file")
         group.set_defaults(**config_values)
 
-        args.add_argument("-j", "--json-secret-path", default=DEFAULT_JSON_SECRET_PATH,
+        args.add_argument("-j", "--json-value-accessor", default=DEFAULT_JSON_VALUE_ACCESSOR,
                           help="JSON path to extract the value from the object.")
         args.add_argument("--secret-path", help="The path to the secret.", required="secret_path" not in config_values)
 
@@ -397,10 +397,10 @@ class ParsingUtils:
 
 class Utils:
     @staticmethod
-    def extract_json_value(data: Dict[str, Any], key: str):
+    def extract_json_value(data: Dict[str, Any], accessor: str):
         """ Access a dict using a jq-style path. """
         value = data
-        for k in key.lstrip('.').split('.'):
+        for k in accessor.lstrip('.').split('.'):
             value = value[k]
         return value
 
