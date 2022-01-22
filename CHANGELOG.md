@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://www.github.com/soerenschneider/occult/compare/v1.4.0...v1.5.0) (2022-01-22)
+
+
+### Features
+
+* complete rewrite ([4cbafbd](https://www.github.com/soerenschneider/occult/commit/4cbafbdf9985a6421fe3ece7818292e03be69f09))
+
 ## [1.4.0](https://www.github.com/soerenschneider/occult/compare/v1.3.0...v1.4.0) (2021-10-20)
 
 
