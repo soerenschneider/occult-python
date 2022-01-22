@@ -31,7 +31,7 @@ A valid config example can be seen [here](contrib/test.json).
 | vault_ttl_increase   | Increase static vault token by x seconds. Specifying 0 or using AppRole authentication disablbes this feature                                    | int          | N         |            |
 | quiet                | Only print warnings and errors                                                                                                                   | bool         | N         | False      |
 | backoff_attempts     | Try n attempts before giving up                                                                                                                  | int          | N         | 5          |
-| json_secret_path     | JQ-style accessor to extract the secret value from the JSON response object                                                                      | string       | Y         | data.value |
+| json_value_accessor  | JQ-style accessor to extract the secret value from the JSON response object                                                                      | string       | Y         | data.value |
 | secret_path          | Path to the secret to read from vault                                                                                                            | string       | Y         |            |
 | cmd                  | Program (and arguments) to run after piping the secret                                                                                           | string array | Y         |            |
 | post_hook            | Optional post hook command and arguments to run after successfully piping the secret                                                             | string array | N         |            |
