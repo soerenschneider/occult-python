@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.1](https://www.github.com/soerenschneider/occult/compare/v1.5.0...v1.5.1) (2022-01-23)
+
+
+### Miscellaneous Chores
+
+* release 1.5.1 ([2194dd4](https://www.github.com/soerenschneider/occult/commit/2194dd41793e4d6d945c28d4ea1775353ffd4633))
+
 ## [1.5.0](https://www.github.com/soerenschneider/occult/compare/v1.4.0...v1.5.0) (2022-01-22)
 
 
