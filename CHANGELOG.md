@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.2](https://www.github.com/soerenschneider/occult/compare/v1.5.1...v1.5.2) (2022-02-24)
+
+
+### Bug Fixes
+
+* Catch errors when building auth method ([7e948aa](https://www.github.com/soerenschneider/occult/commit/7e948aa5ea7e467c18ae6bc554fa69b6896e8e84))
+
 ### [1.5.1](https://www.github.com/soerenschneider/occult/compare/v1.5.0...v1.5.1) (2022-01-23)
 
 
