@@ -492,7 +492,12 @@ def main():
         http_pool.mount("http://", HTTPAdapter(max_retries=retries))
         http_pool.mount("https://", HTTPAdapter(max_retries=retries))
 
-    auth_method = Utils.build_auth_method(args, http_pool)
+    try:
+        auth_method = Utils.build_auth_method(args, http_pool)
+    except (FileNotFoundError, PermissionError) as err:
+        logging.error("Could not authorize: %s", err)
+        sys.exit(1)
+
     logging.info("Using '%s' auth method", auth_method.name)
     vault_client = VaultClient(args.vault_address, auth_method, http_pool=http_pool)
 
