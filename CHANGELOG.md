@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/soerenschneider/occult/compare/v1.5.2...v1.6.0) (2022-06-21)
+
+
+### Features
+
+* Allow running multiple post_hooks ([2329ebc](https://github.com/soerenschneider/occult/commit/2329ebc9b8f40e8dba87e36ea765ef6b344eb21d))
+
 ### [1.5.2](https://www.github.com/soerenschneider/occult/compare/v1.5.1...v1.5.2) (2022-02-24)
 
 
