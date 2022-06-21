@@ -92,12 +92,12 @@ class VaultClient:
 
 class Drone:
     """ Pipes the password to the configured command, runs the post-hook. """
-    def __init__(self, cmd: List[str], post_hook: List[str] = None, timeout: int = 60):
+    def __init__(self, cmd: List[str], post_hooks: List[List[str]] = None, timeout: int = 60):
         if not cmd:
             raise ValueError("No valid cmd given")
 
         self.cmd = cmd
-        self.post_hook = post_hook
+        self.post_hooks = post_hooks
 
         if timeout < 1 or timeout > 6000:
             raise ValueError("Invalid value for timeout, must be in range [1, 6000]")
@@ -113,18 +113,19 @@ class Drone:
                 raise CmdNotSuccessfulException()
             logging.info("Sent password to defined cmd '%s'", self.cmd[0])
 
-    def run_post_hook(self) -> None:
-        if not self.post_hook:
+    def run_post_hooks(self) -> None:
+        if not self.post_hooks:
             return
 
-        logging.info("Running post hook cmd '%s'", self.post_hook[0])
-        with Popen(self.post_hook, stdout=DEVNULL) as proc:
-            proc.wait(self.timeout)
-            if proc.returncode != 0:
-                raise CmdNotSuccessfulException()
+        for hook in self.post_hooks:
+            logging.info("Running post hook cmd '%s'", hook[0])
+            with Popen(hook, stdout=DEVNULL) as proc:
+                proc.wait(self.timeout)
+                if proc.returncode != 0:
+                    raise CmdNotSuccessfulException()
 
 
-def start_occultism(args: argparse.Namespace, vault_client: VaultClient, drone: Drone) -> None:
+def start_occult(args: argparse.Namespace, vault_client: VaultClient, drone: Drone) -> None:
     success = False
     ttl_to_expiration = -1
     token = None
@@ -140,7 +141,7 @@ def start_occultism(args: argparse.Namespace, vault_client: VaultClient, drone: 
         password = Utils.extract_json_value(read_secret, args.json_value_accessor)
 
         drone.send_password(password)
-        drone.run_post_hook()
+        drone.run_post_hooks()
 
         success = True
     except KeyError as err:
@@ -297,7 +298,7 @@ class ParsingUtils:
         if args.vault_secret_id and args.vault_secret_id_file:
             raise ValueError("Must not specify 'both vault-secret-id' and 'vault-secret-id-file'")
 
-        if (not args.vault_token or not args.vault_token_file) and not args.vault_role_id and (not args.vault_secret_id or not args.vault_secret_id_file):
+        if not (args.vault_token or args.vault_token_file) and not args.vault_role_id and (not args.vault_secret_id or not args.vault_secret_id_file):
             raise ValueError("Must specify either 'token' or AppRole auth")
 
         if not args.vault_role_id and (args.vault_secret_id or args.vault_secret_id_file):
@@ -379,7 +380,7 @@ class ParsingUtils:
         args.add_argument("--secret-path", help="The path to the secret.", required="secret_path" not in config_values)
 
         args.add_argument("--cmd", type=list, required="cmd" not in config_values)
-        args.add_argument("--post-hook", type=list, default=None)
+        args.add_argument("--post-hooks", nargs='+', action='append', default=None)
 
         args.add_argument("-p", "--profile", default=DEFAULT_PROFILE_NAME)
         args.add_argument("-m", "--metrics-file")
@@ -390,7 +391,7 @@ class ParsingUtils:
         known_config_keys = [d.dest for d in args._actions]
         for conf_file_val in config_values:
             if conf_file_val not in known_config_keys:
-                raise ValueError(f"Unknown config key: {conf_file_val}")
+                raise ValueError(f"Unknown config key: '{conf_file_val}', pick from '{known_config_keys}'")
 
         return args.parse_args(remaining_argv)
 
@@ -501,8 +502,8 @@ def main():
     logging.info("Using '%s' auth method", auth_method.name)
     vault_client = VaultClient(args.vault_address, auth_method, http_pool=http_pool)
 
-    drone = Drone(args.cmd, args.post_hook)
-    start_occultism(args, vault_client, drone)
+    drone = Drone(args.cmd, args.post_hooks)
+    start_occult(args, vault_client, drone)
 
 
 if __name__ == "__main__":
