@@ -3,7 +3,7 @@ DIR = /opt/occult
 
 .PHONY: venv
 venv:
-	if [ ! -d venv ]; then python3 -m venv venv; fi
+	python3 -m venv venv --upgrade
 	venv/bin/pip3 install -r requirements.txt
 
 install-venv: _copy
