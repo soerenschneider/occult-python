@@ -1,4 +1,4 @@
-FROM python:3.11.1-alpine
+FROM python:3.11.2-alpine
 
 ARG USER_ID=65535
 ARG USER_NAME=occult
