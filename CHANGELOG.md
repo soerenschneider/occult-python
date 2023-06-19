@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/soerenschneider/occult/compare/v1.6.0...v2.0.0) (2023-06-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* change type of cmd and post_hooks
+
+### Code Refactoring
+
+* change type of cmd and post_hooks ([bc59732](https://github.com/soerenschneider/occult/commit/bc59732bf8eaa706cd2fec4647dc05c9b80b6c32))
+
 ## [1.6.0](https://github.com/soerenschneider/occult/compare/v1.5.2...v1.6.0) (2022-06-21)
 
 
