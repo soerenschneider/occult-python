@@ -33,14 +33,6 @@ class AuthMethod(ABC):
         pass
 
     @abstractmethod
-    def lookup(self):
-        pass
-
-    @abstractmethod
-    def renew(self, ttl: int) -> Dict[str, Any]:
-        pass
-
-    @abstractmethod
     def cleanup(self) -> bool:
         pass
 
@@ -67,16 +59,6 @@ class VaultClient:
     def authenticate(self) -> Optional[str]:
         logging.info("Trying to authenticate with '%s'", self.auth_method.name)
         return self.auth_method.get_token()
-
-    def get_token_ttl(self) -> Optional[int]:
-        content = self.auth_method.lookup()
-        if content and "ttl" in content["data"]:
-            return content["data"]["ttl"]
-        return None
-
-    def renew(self, ttl: int = 2592000) -> Dict[str, Any]:
-        logging.info("Trying to renew token for %d seconds", ttl)
-        return self.auth_method.renew(ttl)
 
     def read_kv_secret_data(self, token: str, vault_secret_path: str) -> Optional[str]:
         url = urljoin(self._endpoint, f"/v1/{self._secret_mount}/data/{vault_secret_path}")
@@ -127,8 +109,6 @@ class Drone:
 
 def start_occult(args: argparse.Namespace, vault_client: VaultClient, drone: Drone) -> None:
     success = False
-    ttl_to_expiration = -1
-    token = None
 
     try:
         token = vault_client.authenticate()
@@ -156,20 +136,6 @@ def start_occult(args: argparse.Namespace, vault_client: VaultClient, drone: Dro
         logging.error("Error while talking to vault: %s", err)
 
     try:
-        if args.vault_ttl_increase:
-            vault_client.renew(args.vault_ttl_increase)
-        ttl_to_expiration = vault_client.get_token_ttl()
-
-        if not ttl_to_expiration:
-            logging.warning("Could not get token info")
-        elif ttl_to_expiration == 0:
-            logging.info("Used token does not expire")
-        else:
-            logging.info(
-                "Token expires in %d seconds (on %s)",
-                ttl_to_expiration,
-                datetime.datetime.now() + datetime.timedelta(seconds=ttl_to_expiration)
-            )
         if not vault_client.cleanup():
             logging.warning("Cleanup not successful")
     except VaultException as err:
@@ -183,7 +149,7 @@ def start_occult(args: argparse.Namespace, vault_client: VaultClient, drone: Dro
 
     logging.info("Writing metrics to %s", args.metrics_file)
     try:
-        Utils.write_metrics_file(args.metrics_file, ttl_to_expiration, success, args.profile)
+        Utils.write_metrics_file(args.metrics_file, success, args.profile)
     except OSError as err:
         logging.error("Could not write metrics: %s", err)
 
@@ -205,27 +171,6 @@ class StaticTokenMethod(AuthMethod):
 
     def get_token(self) -> str:
         return self._token
-
-    def lookup(self):
-        logging.info("Trying to lookup used token")
-        url = urljoin(self._endpoint, "/v1/auth/token/lookup-self")
-        resp = self._http_pool.get(headers={'X-Vault-Token': self._token}, url=url)
-        if not resp.ok:
-            raise VaultException(f"Couldn't lookup token, got HTTP {resp.status_code}: {resp.content} for {url}")
-
-        return json.loads(resp.content)
-
-    def renew(self, ttl: int) -> Dict[str, Any]:
-        logging.info("Trying to renew token by %d seconds", ttl)
-        url = urljoin(self._endpoint, "/v1/auth/token/renew-self")
-        data = {
-            "increment": f"{ttl}s"
-        }
-        resp = self._http_pool.post(headers={'X-Vault-Token': self._token}, url=url, json=data)
-        if resp.ok:
-            raise VaultException(f"Couldn't lookup token, got HTTP {resp.status_code}: {resp.content} for {url}")
-
-        return json.loads(resp.content)
 
     def cleanup(self) -> bool:
         logging.info("Not cleaning up static token")
@@ -278,12 +223,6 @@ class AppRoleMethod(AuthMethod):
         content = json.loads(resp.content)
         self._token = content["auth"]["client_token"]
         return self._token
-
-    def lookup(self):
-        logging.info("Not performing lookup. Lookup of secret_id not supported")
-
-    def renew(self, ttl: int) -> Dict[str, Any]:
-        logging.info("Not performing renewal of secret_id, not supported")
 
     def cleanup(self) -> bool:
         logging.info("Revoking acquired token")
@@ -364,8 +303,6 @@ class ParsingUtils:
         args.add_argument("--vault-token", help="The vault token")
         args.add_argument("--vault-token-file", help="Flat file to read the vault token from.")
         args.add_argument("--vault-role-id", help="The role_id to login to the AppRole")
-        args.add_argument("--vault-ttl-increase", type=int, default=None,
-                          help="Renew vault secret_id / token for x seconds.")
         args.add_argument("-q", "--quiet", help="Be quiet.", action="store_true")
         args.add_argument("-b", "--backoff-attempts", type=int, default=DEFAULT_BACKOFF_ATTEMPTS,
                           help="How often to try retry a operation")
@@ -441,7 +378,7 @@ class Utils:
         return p.read_text(encoding="utf-8")
 
     @staticmethod
-    def write_metrics_file(metrics_file: str, token_ttl: int, success: bool, profile="default") -> None:
+    def write_metrics_file(metrics_file: str, success: bool, profile="default") -> None:
         # instead of adding another dependency, we just write this simple metrics file manually
 
         payload = f"""# TYPE occult_last_invocation_seconds gauge
@@ -450,11 +387,6 @@ occult_last_invocation_seconds{{profile="{ profile }"}} { datetime.datetime.now(
 occult_success_bool{{profile="{ profile }"}} { 1 if success else 0 }
 """
 
-        if token_ttl:
-            expiry = datetime.datetime.now() + datetime.timedelta(seconds=token_ttl).timestamp()
-            payload += f"""# TYPE occult_token_ttl_seconds gauge
-occult_token_expiry_seconds{{profile="{profile}"}} {expiry}
-"""
         with open(metrics_file, 'w', encoding="utf-8") as metrics_file:
             metrics_file.write(payload)
 
