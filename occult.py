@@ -86,7 +86,7 @@ class Drone:
             raise ValueError("'post_hooks' is expected to be a list of strings")
         self.post_hooks = post_hooks
 
-        if timeout < 1 or timeout > 6000:
+        if timeout < 10 or timeout > 6000:
             raise ValueError("Invalid value for timeout, must be in range [1, 6000]")
         self.timeout = timeout
 
