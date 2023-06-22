@@ -74,12 +74,12 @@ class VaultClient:
 
 class Drone:
     """ Pipes the password to the configured command, runs the post-hook. """
-    def __init__(self, cmd: List[str], post_hooks: List[str] = None, timeout: int = 60):
+    def __init__(self, cmd: str, post_hooks: List[str] = None, timeout: int = 60):
         if not cmd:
             raise ValueError("No cmd provided")
 
-        if not isinstance(cmd, list) or any(not isinstance(item, str) for item in cmd):
-            raise ValueError("'cmd' is expected to be a list of strings")
+        if not isinstance(cmd, str):
+            raise ValueError("'cmd' is expected to be a string")
         self.cmd = cmd
 
         if post_hooks and (not isinstance(post_hooks, list) or any(not isinstance(item, str) for item in post_hooks)):
