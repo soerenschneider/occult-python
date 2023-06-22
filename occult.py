@@ -107,10 +107,13 @@ class Drone:
         for hook in self.post_hooks:
             logging.info("Running post hook cmd '%s'", hook)
             cmd = hook.split(" ")
-            with Popen(cmd, stdout=DEVNULL) as proc:
-                proc.wait(self.timeout)
-                if proc.returncode != 0:
-                    raise CmdNotSuccessfulException()
+            try:
+                with Popen(cmd, stdout=DEVNULL) as proc:
+                    proc.wait(self.timeout)
+                    if proc.returncode != 0:
+                        logging.error("hook returned exitcode %d", proc.returncode)
+            except Exception as err:
+                logging.error("error running hook: %s", err)
 
 
 def start_occult(args: argparse.Namespace, vault_client: VaultClient, drone: Drone) -> None:
