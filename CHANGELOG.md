@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://github.com/soerenschneider/occult/compare/v2.0.0...v2.0.1) (2023-06-22)
+
+
+### Bug Fixes
+
+* be more consistent and expect cmd as string ([d1a19c4](https://github.com/soerenschneider/occult/commit/d1a19c4369a4e641045eab40e7bb2dfc9c8dde20))
+* run all post_hooks even on failure of an earlier one ([67e9eb8](https://github.com/soerenschneider/occult/commit/67e9eb87b8129df5009f9a6e618e97a49037e60b))
+
 ## [2.0.0](https://github.com/soerenschneider/occult/compare/v1.6.0...v2.0.0) (2023-06-19)
 
 
