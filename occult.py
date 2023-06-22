@@ -19,7 +19,7 @@ from requests.adapters import HTTPAdapter
 import requests
 
 
-DEFAULT_BACKOFF_ATTEMPTS = 5
+DEFAULT_BACKOFF_ATTEMPTS = 15
 DEFAULT_PROFILE_NAME = "default"
 DEFAULT_CONFIG_LOCATION = "~/.occult.conf"
 DEFAULT_JSON_VALUE_ACCESSOR = "data.value"
