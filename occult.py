@@ -93,7 +93,8 @@ class Drone:
     def send_password(self, password: str) -> None:
         logging.info("Sending password to defined command '%s'", self.cmd[0])
         enc = password.encode('utf-8')
-        with Popen(self.cmd, stdin=PIPE, stdout=DEVNULL) as proc:
+        cmd = self.cmd.split(" ")
+        with Popen(cmd, stdin=PIPE, stdout=DEVNULL) as proc:
             proc.communicate(input=enc)
             proc.wait(self.timeout)
             if proc.returncode != 0:
@@ -325,7 +326,7 @@ class ParsingUtils:
                           help="JSON path to extract the value from the object.")
         args.add_argument("--secret-path", help="The path to the secret.", required="secret_path" not in config_values)
 
-        args.add_argument("--cmd", type=list, required="cmd" not in config_values)
+        args.add_argument("--cmd", type=str, required="cmd" not in config_values)
         args.add_argument("--post-hooks", nargs='+', action='append', default=None)
 
         args.add_argument("-p", "--profile", default=DEFAULT_PROFILE_NAME)
