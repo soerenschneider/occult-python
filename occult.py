@@ -91,15 +91,15 @@ class Drone:
         self.timeout = timeout
 
     def send_password(self, password: str) -> None:
-        logging.info("Sending password to defined command '%s'", self.cmd[0])
         enc = password.encode('utf-8')
         cmd = self.cmd.split(" ")
+        logging.info("Sending password to defined command '%s'", cmd[0])
         with Popen(cmd, stdin=PIPE, stdout=DEVNULL) as proc:
             proc.communicate(input=enc)
             proc.wait(self.timeout)
             if proc.returncode != 0:
                 raise CmdNotSuccessfulException()
-            logging.info("Sent password to defined cmd '%s'", self.cmd[0])
+            logging.info("Sent password to defined cmd '%s'", cmd[0])
 
     def run_post_hooks(self) -> None:
         if not self.post_hooks:
