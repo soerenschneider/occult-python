@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/soerenschneider/occult/compare/v2.0.1...v2.0.2) (2023-06-23)
+
+
+### Bug Fixes
+
+* adapt all code to new cmd structure ([84ce255](https://github.com/soerenschneider/occult/commit/84ce255fc1ed6f9a2d7f4abf6b0121c48510b687))
+
 ## [2.0.1](https://github.com/soerenschneider/occult/compare/v2.0.0...v2.0.1) (2023-06-22)
 
 
