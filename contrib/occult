@@ -1,0 +1,4 @@
+#!/bin/sh
+
+DIR=/opt/occult
+"${DIR}/venv/bin/python3" "${DIR}/occult.py" $@
