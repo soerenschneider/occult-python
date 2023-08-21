@@ -10,8 +10,7 @@ install-venv: _copy
 	if [ ! -d ${DIR}/venv ]; then python3 -m venv ${DIR}/venv; fi
 	${DIR}/venv/bin/pip3 install -r requirements.txt
 	if [ -s ${SCRIPT} ]; then rm -vf ${SCRIPT}; fi
-	echo '#!/bin/sh'                                            >  ${SCRIPT}
-	echo "${DIR}/venv/bin/python3 ${DIR}/occult.py"   >> ${SCRIPT}
+	cp contrib/occult ${SCRIPT}
 	chmod 555 ${SCRIPT}
 	chown root ${SCRIPT}
 
