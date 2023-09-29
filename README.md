@@ -1,5 +1,17 @@
 # Occult
-Reads a secret from Hashicorp Vault's K/V store, extracts & pipes the acquired secret to a pre-configured program in order to automate a process involving a secret.
+Generic process automation based on reading secrets from Vault and piping them to other tools
+
+## Features
+
+🔐 Reads secret data from Vault and pipes it to a pre-defined program<br/>
+🛂 Authenticates using AppRole or Token<br/>
+🪝 Supports running post-hooks<br/>
+🔭 Observability using Open Telemetry metrics<br/>
+
+## Use-Cases
+
+🔓 Unlock encrypted disks automatically right after system boot<br/>
+🔓 Unlock password protected keys automatically<br/>
 
 ## Demo
 ![demo](demo.gif)
@@ -7,8 +19,8 @@ Reads a secret from Hashicorp Vault's K/V store, extracts & pipes the acquired s
 ## Installation
 
 ```shell
-git clone https://github.com/soerenschneider/occult.git
-sudo make -C occult install
+$ git clone https://github.com/soerenschneider/occult.git
+$ sudo make -C occult install
 ```
 
 ## Configuration
@@ -44,7 +56,6 @@ A valid config example can be seen [here](contrib/test.json).
 
 | Name                           | Help                                        | Type  | Labels  |
 |--------------------------------|---------------------------------------------|-------|---------|
-| occult_token_expiry_seconds    | Unix timestamp when the used token expires  | Gauge | profile |
 | occult_last_invocation_seconds | Unix timestamp when occult has been invoked | Gauge | profile |
 | occult_success_bool            | Boolean whether this run was successful     | Gauge | profile |
 
@@ -70,7 +81,6 @@ resource "vault_token_auth_backend_role" "occult" {
     "default"
   ]
   orphan = true
-  token_bound_cidrs = var.token_cidrs
 }
 
 resource "vault_token" "occult" {
@@ -84,5 +94,3 @@ resource "vault_token" "occult" {
   ttl          = var.token_ttl
 }
 ```
-
-A complete, fully functional example can be found [here](https://github.com/soerenschneider/tf-vault)
