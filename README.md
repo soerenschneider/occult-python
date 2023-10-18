@@ -1,3 +1,6 @@
+> [!WARNING]  
+> This repo is archived [and superseded](https://github.com/soerenschneider/occult)
+
 # Occult
 Generic process automation based on reading secrets from Vault and piping them to other tools
 
