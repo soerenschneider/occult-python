@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.5.1](https://github.com/soerenschneider/occult/compare/v1.2.0...v1.5.1) (2023-10-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* change type of cmd and post_hooks
+
+### Features
+
+* Add possibility for different profiles ([1a56f16](https://github.com/soerenschneider/occult/commit/1a56f1648aa663ad735df10a47c5ab3ab6b823b6))
+* Allow running multiple post_hooks ([979130b](https://github.com/soerenschneider/occult/commit/979130b0f1182cc2305a84c8d3dfc44d36bfdbaf))
+* complete rewrite ([b6713c9](https://github.com/soerenschneider/occult/commit/b6713c9568ab4614dbf2f554922e9fc6062b38ed))
+* try to renew token ([ffc3e9b](https://github.com/soerenschneider/occult/commit/ffc3e9ba94eca495c2595b7f88b9850153fb0468))
+
+
+### Bug Fixes
+
+* adapt all code to new cmd structure ([29f7b6d](https://github.com/soerenschneider/occult/commit/29f7b6dc671478ead8681ef127399196a2ea06a1))
+* also fix log statements ([ae42827](https://github.com/soerenschneider/occult/commit/ae42827a9ee773cf7243ae461ab7c69476a480a9))
+* be more consistent and expect cmd as string ([b374751](https://github.com/soerenschneider/occult/commit/b374751623344fbe54ee61b1f4538dde3acdfe38))
+* Catch errors when building auth method ([f3a6e4e](https://github.com/soerenschneider/occult/commit/f3a6e4eb21fe9d7dd0f26f8e931b44e0c9e12fe5))
+* Fix invalid metric format ([25739e8](https://github.com/soerenschneider/occult/commit/25739e832a865518d7a5379a37b9a4971c30505f))
+* ignore cmd output ([972d65b](https://github.com/soerenschneider/occult/commit/972d65b46407f19796fc2ca64effb7178faf1262))
+* Replace relative expiry value with absolute value ([1a269b4](https://github.com/soerenschneider/occult/commit/1a269b46dc8912255e766cef9215efe8c5b46ef9))
+* run all post_hooks even on failure of an earlier one ([dee4eae](https://github.com/soerenschneider/occult/commit/dee4eaeddaf0272285aa74962bd788eef0b2cf07))
+
+
+### Miscellaneous Chores
+
+* release 1.5.1 ([16b4efc](https://github.com/soerenschneider/occult/commit/16b4efc75606b5758e9f99242222458c386793ca))
+
+
+### Code Refactoring
+
+* change type of cmd and post_hooks ([216d82d](https://github.com/soerenschneider/occult/commit/216d82d2cee703fbd41911652ac26def112fbd8a))
+
 ## [2.0.2](https://github.com/soerenschneider/occult/compare/v2.0.1...v2.0.2) (2023-06-23)
 
 
